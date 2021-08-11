@@ -182,11 +182,22 @@ object hof{
    * Реализовать метод printIfAny, который будет печатать значение, если оно есть
    */
 
+  def printIfAny: Unit = this match {
+    case Option.Some(v) => println(v)
+    case _ => None
+  }
 
   /**
    *
    * Реализовать метод zip, который будет создавать Option от пары значений из 2-х Option
    */
+
+  def zip[T](v1: Option[T], v2: Option[T]): Option = this match {
+    case (Some(v1), Some(v2)) => v1 + v2
+    case (None, Some(_)) => v2
+    case (Some(_), None) => v1
+    case (None, None) => None
+  }
 
 
   /**
@@ -206,11 +217,22 @@ object hof{
     * Cons - непустой, содердит первый элемент (голову) и хвост (оставшийся список)
     */
 
+   object List{
+     case class Cons[H, T](h: H, t: T) extends list
+     case object Nil extends list[Nothing]
+   }
+
+
+
 
     /**
      * Метод cons, добавляет элемент в голову списка, для этого метода можно воспользоваться названием `::`
      *
      */
+
+   def cons[E](e: E): list = this match {
+     case List.Cons(h, t) => h::e
+   }
 
     /**
       * Метод mkString возвращает строковое представление списка, с учетом переданного разделителя
