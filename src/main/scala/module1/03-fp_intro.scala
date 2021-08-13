@@ -104,18 +104,7 @@ object list {
       case List.Cons(head, Nil) => s"$head"
       case List.Nil => ""
     }
-
-    def reverse(): List[T] = {
-      import list.List
-
-      def loop(l: List[T], acc: List[T]): List[T] =
-        l match {
-          case List.Nil => acc
-          case head :: tail => loop(tail, head :: acc)
-        }
-
-      loop(this, Nil)
-    }
+    
 
     def map[T](f: T => T): List[T] = this match {
       case List.Nil => List.Nil
