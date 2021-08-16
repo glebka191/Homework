@@ -2,6 +2,8 @@ package module1
 
 import module1.list.List.{Cons, Nil}
 
+import scala.annotation.tailrec
+
 object opt {
 
   sealed trait Option[+T] {
@@ -105,6 +107,14 @@ object list {
       case List.Nil => ""
     }
 
+    def reverse: List[T] = {
+      @tailrec
+      def loop(l: List[T], acc: List[T] = List.Nil): List[T] = l match {
+        case List.Nil        => acc
+        case List.Cons(h, t) => loop(t, h :: acc)
+      }
+      loop(this)
+    }
 
     def map[B](f: T => B): List[B] = this match {
       case List.Nil => List.Nil
