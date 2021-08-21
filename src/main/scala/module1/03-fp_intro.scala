@@ -92,13 +92,22 @@ if (isEmpty || that.isEmpty) None else Some((this.get, that.get))
 object list {
 
   sealed trait List[+T] {
-    //  def :: [B >: A](elem: B): List[B] =  new ::(elem, this)
+
     def ::[B >: T](elem: B): List[B] = Cons(elem, this)
 
-    def apply[T](arg: T*): List[T] = {
-      var l: List[T] = List.Nil
-      arg.foreach(el => l = el :: l)
-      l
+    def ::[B >: T](otherList: List[B]): List[B] = {
+      this match {
+        case Cons(head, tail) => Cons(head, tail :: otherList)
+        case List.Nil => List.Nil
+      }
+    }
+
+
+    def apply[TT >: T](args: TT*): List[TT] = {
+      def f( _args: Seq[TT]): List[TT] =
+        if(_args.isEmpty) List.Nil
+        else _args.head :: f(_args.tail)
+      f(args)
     }
 
     def mkString(str: String = ","): String = this match {
@@ -116,9 +125,23 @@ object list {
       loop(this)
     }
 
-    def map[B](f: T => B): List[B] = this match {
-      case List.Nil => List.Nil
-      case List.Cons(h, t) => f(h) :: t.map(f)
+    def map[B](f: T => B): List[B] = {
+      def loop(list: List[T]): List[B] = {
+        list match{
+          case List.Cons(h, t) => List.Cons(f(h), loop(t))
+          case _ => List.Nil
+        }
+      }
+      loop(this)
+    }
+
+    def flatMap[B](f:T => List[B]):List[B] = {
+      @tailrec
+      def loop(list: List[T], tList: List[B] = List.Nil):List[B] = list match {
+        case List.Nil => tList
+        case List.Cons(head, tail) => loop(tail, f(head) :: tList )
+      }
+      loop(this.reverse)
     }
 
     def filter(f: T => Boolean): List[T] = this match {
